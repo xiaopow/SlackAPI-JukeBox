@@ -1,0 +1,28 @@
+<head>
+  <title>WDI Juke Box</title>
+</head>
+
+<body>
+  <div class="container">
+    <header>
+      <h1>HK WDI7 JUKE BOX</h1>
+    </header>
+    {{> YTPlayer name="player"}}
+
+    <ul>
+      {{#each songs}}
+        {{> song}}
+      {{/each}}
+    </ul>
+
+
+  </div>
+</body>
+
+<template name="song">
+  <li>
+    <button class="delete">&times;</button>
+    <span class="text">{{title}}</span>
+  </li>
+
+</template>
