@@ -3,7 +3,7 @@ Songs = new Mongo.Collection("songs")
 if (Meteor.isClient) {
   // This code only runs on the client
 
-  var yt = new YTPlayer("player", {videoId: 'HMUDVMiITOU'} )
+  var yt = new YTPlayer("player", {videoId: 'zE7PKRjrid4'} )
 
   // Tracker.autorun(function () {
   //   var yt_id =  'HMUDVMiITOU' // the video id for a youtube video
@@ -12,7 +12,7 @@ if (Meteor.isClient) {
 
   Tracker.autorun(function (song) {
     console.log(song);
-    var yt_id = 'HMUDVMiITOU' // the video id for a youtube video
+    var yt_id = 'zE7PKRjrid4' // the video id for a youtube video
     if (yt.ready()) {
       function play() {
         yt.player.loadVideoById(yt_id);
@@ -63,22 +63,28 @@ if (Meteor.isServer) {
   Meteor.startup(function () {
     Meteor.setInterval( function () {
       Meteor.call("checkSlack", function(err, res) {
-        console.log(res.data.messages[0].text); 
+        // console.log(res.data.messages[0].text); 
         link = res.data.messages[0].text;
         link = link.split(" ");
         if (link[0] == "music") {
           var newSongId = link[1].match( /v=(.*)$/g )[0];
           newSongId = newSongId.slice(2, -1);
-          Meteor.call("getTitle", newSongId, function(err, res) {
-            console.log(res.data.items[0].snippet.title);
-            var newTitle = res.data.items[0].snippet.title;
-            console.log(newSongId);
-            Songs.update(
-              { songId: newSongId },
-              { $set: { title: newTitle, createdAt: new Date()}},
-              { upsert: true }
-            );
-          })
+          var songExist = Songs.findOne({songId: newSongId});
+
+          if (songExist){
+            // console.log("song already in queue")
+          } else {
+            Meteor.call("getTitle", newSongId, function(err, res) {
+              console.log(res.data.items[0].snippet.title);
+              var newTitle = res.data.items[0].snippet.title;
+              console.log(newSongId);
+              Songs.update(
+                { songId: newSongId },
+                { $set: { title: newTitle, createdAt: new Date()}},
+                { upsert: true }
+              );
+            })
+          }
         }
       });
     }, 1000 );
