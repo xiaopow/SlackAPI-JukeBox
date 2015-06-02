@@ -12,7 +12,7 @@ if (Meteor.isClient) {
 
   Tracker.autorun(function (song) {
     console.log(song);
-    var yt_id = 'zE7PKRjrid4' // the video id for a youtube video
+    var yt_id = 'EUF-yFIQd_0' // the video id for a youtube video
     if (yt.ready()) {
       function play() {
         yt.player.loadVideoById(yt_id);
